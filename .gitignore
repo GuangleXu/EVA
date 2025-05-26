@@ -1,0 +1,57 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 虚拟环境
+.venv/
+env/
+venv/
+ENV/
+
+# 开发工具配置文件
+.idea/
+.vscode/
+.DS_Store
+
+# 数据库文件
+*.sqlite3
+
+# 多媒体文件
+media/
+logs/
+logfiles/
+
+# 依赖目录
+node_modules/
+
+# 环境变量文件
+.env
+
+# 缓存文件夹
+.cache/
+
+# 新增的忽略规则
+data/
+models/
+logfiles/
+media/
+logs/
+.venv/
+node_modules/
+*.pth
+*.pt
+*.bin
+*.h5
+*.ckpt
+*.mp4
+*.avi
+*.mov
+*.zip
+*.tar
+*.gz
+*.7z
+
+# 忽略所有 txt 文件
+*.txt 

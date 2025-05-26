@@ -1,0 +1,13 @@
+{
+  "use_secondme_long_term_memory": true,
+  "use_secondme_working_memory": true,
+  "use_secondme_rule_memory": true,
+  "data_path": "/app/data",
+  "model_path": "models",
+  "verbose_logging": true,
+  "model_config": {
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "dimension": 384,
+    "use_gpu": false
+  }
+} 

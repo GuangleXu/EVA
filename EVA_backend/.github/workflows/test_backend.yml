@@ -1,0 +1,22 @@
+name: Test EVA Backend
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 构建 Docker 镜像
+      - name: Build Docker Image
+        run: docker build -t eva-backend -f Dockerfile.backend .
+
+      # 运行测试
+      - name: Run Tests
+        run: docker run --rm eva-backend pytest # 替换为您的测试命令

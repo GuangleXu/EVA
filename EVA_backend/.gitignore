@@ -1,0 +1,49 @@
+# Python 缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 虚拟环境
+.venv/
+env/
+venv/
+ENV/
+
+# 开发工具配置文件
+.idea/
+.vscode/
+.DS_Store
+
+# 数据库文件
+*.sqlite3
+
+# 多媒体文件（可根据需要保留或忽略）
+media/
+logs/
+logfiles/
+
+# Git 相关文件夹
+.git_disabled/
+
+# 测试文件夹（你不想上传）
+tests/
+
+# 新增的目录和文件类型
+data/
+models/
+logfiles/
+.venv/
+node_modules/
+*.pth
+*.pt
+*.bin
+*.h5
+*.ckpt
+*.mp4
+*.avi
+*.mov
+*.zip
+*.tar
+*.gz
+*.7z

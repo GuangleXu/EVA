@@ -1,0 +1,45 @@
+# 使用Node.js作为基础镜像
+FROM node:18-bullseye-slim
+
+# 切换到网易镜像源
+RUN sed -i 's/deb.debian.org/mirrors.163.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/mirrors.163.com/g' /etc/apt/sources.list
+
+# 设置工作目录
+WORKDIR /app
+
+# 设置 npm 镜像
+RUN npm config set registry https://registry.npmmirror.com
+
+# 安装 git
+RUN apt-get update && \
+    apt-get install -y git && \
+    apt-get install -y \
+    libgtk-3-0 \
+    libnotify4 \
+    libnss3 \
+    libxss1 \
+    libxtst6 \
+    xdg-utils \
+    libatspi2.0-0 \
+    libdrm2 \
+    libgbm1 \
+    libxcb-dri3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置环境变量
+ENV ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ \
+    ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/ \
+    DISPLAY=:0
+
+# 复制 package.json
+COPY package*.json ./
+
+# 安装依赖
+RUN npm install
+
+# 复制项目文件
+COPY . .
+
+# 启动开发服务器
+CMD ["npm", "run", "dev"]

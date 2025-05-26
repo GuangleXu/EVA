@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "EVA_backend" # 依赖文件位于 EVA_backend 目录
+    schedule:
+      interval: "weekly" # 每周检查一次

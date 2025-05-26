@@ -1,0 +1,9 @@
+{
+  "basic": ["name", "gender", "age", "birthday", "occupation", "location"],
+  "contact": ["phone", "email", "address", "wechat", "qq"],
+  "preferences": ["food", "color", "music", "movie", "book", "hobby", "sport", "pet", "travel"],
+  "style": ["communication_style", "humor_level", "formality"],
+  "health": ["allergies", "conditions", "diet_restrictions"],
+  "device": ["device_type", "os", "browser"],
+  "custom": []
+} 

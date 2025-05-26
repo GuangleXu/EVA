@@ -1,0 +1,31 @@
+node_modules/
+/dist
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+.idea/
+.vscode/" > .gitignore
+# Git 相关文件夹
+.git_disabled/
+.github/
+data/
+models/
+logfiles/
+media/
+logs/
+.venv/
+*.pth
+*.pt
+*.bin
+*.h5
+*.ckpt
+*.mp4
+*.avi
+*.mov
+*.zip
+*.tar
+*.gz
+*.7z
