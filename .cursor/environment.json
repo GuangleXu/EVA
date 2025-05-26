@@ -1,15 +1,15 @@
 {
   "build": {
-    "dockerfile": "EVA_backend/Dockerfile.backend",
-    "context": "EVA_backend"
+    "dockerfile": ".cursor/Dockerfile",
+    "context": "."
   },
-  "user": "ubuntu",
-  "install": "sudo apt-get update && sudo apt-get install -y python3.13-venv && python3 -m venv .venv && source .venv/bin/activate && pip install poetry && poetry install",
+  "user": "root",
+  "install": "poetry install --no-root",
   "start": "",
   "terminals": [
     {
       "name": "dev-server",
-      "command": "source .venv/bin/activate && poetry run python main.py",
+      "command": "poetry run python main.py",
       "description": "启动主程序"
     }
   ]
