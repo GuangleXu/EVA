@@ -54,4 +54,31 @@ node_modules/
 *.7z
 
 # 忽略所有 txt 文件
-*.txt 
+*.txt
+
+# SecondMe 相关大文件和目录自动忽略
+EVA_backend/secondme_master/data/
+EVA_backend/secondme_master/logs/
+EVA_backend/secondme_master/lpm_kernel/tokenizer.json
+EVA_backend/secondme_master/lpm_kernel/file_data/chroma_db/
+EVA_backend/secondme_master/lpm_kernel/file_data/sqlite/
+EVA_backend/secondme_master/lpm_kernel/file_data/resources/
+EVA_backend/secondme_master/lpm_kernel/file_data/progress/
+EVA_backend/secondme_master/lpm_kernel/file_data/model_output/
+
+# 常见大文件类型
+*.ckpt
+*.pt
+*.bin
+*.h5
+*.pkl
+*.db
+*.sqlite
+*.log
+*.tmp
+*.npy
+*.npz
+*.tar
+*.zip
+*.gz
+*.7z 
