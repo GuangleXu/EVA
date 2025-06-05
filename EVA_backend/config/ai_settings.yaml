@@ -1,0 +1,39 @@
+llm_provider: openai
+local_llm_service_url: https://api.openai.com/v1/chat/completions
+openai_model: gpt-4o
+
+# DeepSeek 配置
+deepseek_api_base_url: https://api.deepseek.com/v1/chat/completions
+deepseek_model: deepseek-chat
+deepseek_temperature: 0.7
+deepseek_max_tokens: 4096
+
+# SiliconFlow 配置
+siliconflow_api_base_url: https://api.siliconflow.cn/v1/chat/completions
+siliconflow_model: deepseek-ai/DeepSeek-V3
+siliconflow_temperature: 0.7
+siliconflow_max_tokens: 4096
+
+# AI 业务参数
+use_chat_tts: true
+memory_backend: pinecone
+session_expiration_hours: 24
+token_encoding: cl100k_base
+prefer_language: zh
+document_chunk_size: 4000
+document_chunk_overlap: 200
+embedding_max_text_length: 3072
+
+# 业务资源与数据库参数
+chroma_persist_directory: ./data/chroma_db
+resource_dir: resources
+raw_content_dir: ${resource_dir}/raw_content
+data_pipeline_dir: ${resource_dir}/L2/data_pipeline
+
+# ========== sqlite 数据库配置 ==========
+db_type: sqlite                     # 数据库类型，sqlite 适合本地轻量存储
+db_file: data/sqlite/lpm.db         # sqlite 数据库文件路径
+db_pool_size: 5                     # 数据库连接池大小
+db_pool_recycle: 3600               # 连接池中连接的最大存活时间（秒）
+
+

@@ -7,10 +7,11 @@ import os
 import sys
 import traceback
 from pathlib import Path
-from decouple import config as config, Csv
+from decouple import config, Csv
 import dj_database_url
 from logs.logs import logger
 from celery.schedules import crontab
+import yaml
 
 # 确保项目根目录在 Python 路径中
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +24,14 @@ if DEBUG:
     logging.getLogger('uvicorn.error').setLevel(logging.WARNING)
     logging.getLogger('uvicorn.access').setLevel(logging.WARNING)
     logging.getLogger('uvicorn.asgi').setLevel(logging.WARNING)
+
+def safe_config(key, default=None, cast=None):
+    try:
+        print(f"[DEBUG] config type: {type(config)}")  # 增加类型调试输出
+        return config(key, default=default, cast=cast)
+    except Exception as e:
+        print(f"[settings.py] 环境变量 {key} 读取失败: {e}，使用默认值 {default}")
+        return default
 
 def trace_imports(frame, event, arg):
     if event == "call" and frame.f_code.co_name == "<module>" and DEBUG:
@@ -37,8 +46,8 @@ def trace_imports(frame, event, arg):
 
 ROOT_URLCONF = 'eva_backend_django.urls'
 
-SECRET_KEY = config('DJANGO_SECRET_KEY')
-ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost,*', cast=Csv())
+SECRET_KEY = safe_config('DJANGO_SECRET_KEY', default='unsafe-key')
+ALLOWED_HOSTS = safe_config('DJANGO_ALLOWED_HOSTS', default='127.0.0.1,localhost,*', cast=Csv())
 
 INSTALLED_APPS = [
     "channels",
@@ -93,7 +102,7 @@ ASGI_APPLICATION = "eva_backend_django.asgi.application"
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000', cast=Csv())
+CORS_ALLOWED_ORIGINS = safe_config('CORS_ALLOWED_ORIGINS', default='http://localhost:3000,http://127.0.0.1:3000', cast=Csv())
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
@@ -112,61 +121,60 @@ CORS_ALLOW_HEADERS = [
 ]
 
 # ✅ 替换配置变量为标准 Django settings 成员
-PINECONE_API_KEY = config("PINECONE_API_KEY", cast=str)
-PINECONE_REGION = config('PINECONE_REGION')
-PINECONE_MEMORY_INDEX_NAME = config("PINECONE_MEMORY_INDEX_NAME", cast=str)
-PINECONE_RULE_INDEX_NAME = config('PINECONE_RULE_INDEX_NAME', cast=str)
-# 添加通用索引名称，兼容新代码
+PINECONE_API_KEY = safe_config("PINECONE_API_KEY", default="")
+PINECONE_REGION = safe_config('PINECONE_REGION', default='us-east-1')
+PINECONE_MEMORY_INDEX_NAME = safe_config("PINECONE_MEMORY_INDEX_NAME", default="eva-memory")
+PINECONE_RULE_INDEX_NAME = safe_config('PINECONE_RULE_INDEX_NAME', default='eva-rule')
 PINECONE_INDEX_NAME = PINECONE_MEMORY_INDEX_NAME
-PINECONE_DIMENSION = config('PINECONE_DIMENSION', cast=int)
-PINECONE_METRIC = config('PINECONE_METRIC')
-PINECONE_CLOUD = config('PINECONE_CLOUD', default='aws')
+PINECONE_DIMENSION = safe_config('PINECONE_DIMENSION', default=1024, cast=int)
+PINECONE_METRIC = safe_config('PINECONE_METRIC', default='cosine')
+PINECONE_CLOUD = safe_config('PINECONE_CLOUD', default='aws')
 
 LLM_APIS = {
     "deepseek": {
-        "MODEL": config("DEEPSEEK_MODEL", default="deepseek-chat"),
-        "BASE_URL": config("DEEPSEEK_API_BASE_URL", default="https://api.deepseek.com/v1/chat/completions"),
-        "API_KEY": config("DEEPSEEK_API_KEY", default=""),
-        "MAX_TOKENS": config("DEEPSEEK_MAX_TOKENS", default=4096, cast=int),
-        "TEMPERATURE": config("DEEPSEEK_TEMPERATURE", default=0.7, cast=float),
+        "MODEL": safe_config("DEEPSEEK_MODEL", default="deepseek-chat"),
+        "BASE_URL": safe_config("DEEPSEEK_API_BASE_URL", default="https://api.deepseek.com/v1/chat/completions"),
+        "API_KEY": safe_config("DEEPSEEK_API_KEY", default=""),
+        "MAX_TOKENS": safe_config("DEEPSEEK_MAX_TOKENS", default=4096, cast=int),
+        "TEMPERATURE": safe_config("DEEPSEEK_TEMPERATURE", default=0.7, cast=float),
     },
     "siliconflow": {
-        "MODEL": config("SILICONFLOW_MODEL", default="deepseek-ai/DeepSeek-V3"),
-        "BASE_URL": config("SILICONFLOW_API_BASE_URL", default="https://api.siliconflow.cn/v1/chat/completions"),
-        "API_KEY": config("SILICONFLOW_API_KEY", default=""),
-        "MAX_TOKENS": config("SILICONFLOW_MAX_TOKENS", default=4096, cast=int),
-        "TEMPERATURE": config("SILICONFLOW_TEMPERATURE", default=0.7, cast=float),
+        "MODEL": safe_config("SILICONFLOW_MODEL", default="deepseek-ai/DeepSeek-V3"),
+        "BASE_URL": safe_config("SILICONFLOW_API_BASE_URL", default="https://api.siliconflow.cn/v1/chat/completions"),
+        "API_KEY": safe_config("SILICONFLOW_API_KEY", default=""),
+        "MAX_TOKENS": safe_config("SILICONFLOW_MAX_TOKENS", default=4096, cast=int),
+        "TEMPERATURE": safe_config("SILICONFLOW_TEMPERATURE", default=0.7, cast=float),
     },
 }
 
-DATABASE_URL = config('DATABASE_URL', default='sqlite:///db.sqlite3')
+DATABASE_URL = safe_config('DATABASE_URL', default='sqlite:///db.sqlite3')
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
 }
 
-REDIS_HOST = config('REDIS_HOST', default='127.0.0.1')
-REDIS_PORT = config('REDIS_PORT', default=6379, cast=int)
-REDIS_DB = config('REDIS_DB', default=0, cast=int)
+REDIS_HOST = os.environ.get('REDIS_HOST') or safe_config('REDIS_HOST', default='eva-redis')
+REDIS_PORT = int(os.environ.get('REDIS_PORT') or safe_config('REDIS_PORT', default=6379, cast=int))
+REDIS_DB = int(os.environ.get('REDIS_DB') or safe_config('REDIS_DB', default=0, cast=int))
 
-MEMORY_BACKEND = config('MEMORY_BACKEND', default='pinecone')
-HUGGINGFACE_EMBEDDING_MODEL = config('HUGGINGFACE_EMBEDDING_MODEL', default='sentence-transformers/all-mpnet-base-v2')
+MEMORY_BACKEND = safe_config('MEMORY_BACKEND', default='pinecone')
+HUGGINGFACE_EMBEDDING_MODEL = safe_config('HUGGINGFACE_EMBEDDING_MODEL', default='sentence-transformers/all-mpnet-base-v2')
 
-SESSION_EXPIRATION_HOURS = config("SESSION_EXPIRATION_HOURS", default=24, cast=int)
+SESSION_EXPIRATION_HOURS = safe_config("SESSION_EXPIRATION_HOURS", default=24, cast=int)
 
 AI_CONFIG_FILE = BASE_DIR / "config" / "ai_settings.yaml"
-AI_SETTINGS_FILE = config('AI_SETTINGS_FILE', default='ai_settings.yaml')
-PROMPT_SETTINGS_FILE = config('PROMPT_SETTINGS_FILE', default='prompt_settings.yaml')
+AI_SETTINGS_FILE = safe_config('AI_SETTINGS_FILE', default='ai_settings.yaml')
+PROMPT_SETTINGS_FILE = safe_config('PROMPT_SETTINGS_FILE', default='prompt_settings.yaml')
 
-MEDIA_URL = str(config('MEDIA_URL', default='/media/'))
-MEDIA_ROOT = Path(str(config('MEDIA_ROOT', default=BASE_DIR / 'media')))
-TTS_OUTPUT_DIR = Path(str(config('TTS_OUTPUT_DIR', default=MEDIA_ROOT / "tts_output")))
-USE_CHAT_TTS = config("USE_CHAT_TTS", default=True, cast=bool)
+MEDIA_URL = str(safe_config('MEDIA_URL', default='/media/'))
+MEDIA_ROOT = Path(str(safe_config('MEDIA_ROOT', default='/app/media')))
+TTS_OUTPUT_DIR = Path(str(safe_config('TTS_OUTPUT_DIR', default='/app/media/tts_output')))
+USE_CHAT_TTS = safe_config("USE_CHAT_TTS", default=True, cast=bool)
 TTS_URL_PREFIX = f"{MEDIA_URL}tts_output/"
 
-MEMORY_CONSOLIDATION_HOURS = config('MEMORY_CONSOLIDATION_HOURS', default=24, cast=int)
-MEMORY_RETENTION_THRESHOLD = config('MEMORY_RETENTION_THRESHOLD', default=0.6, cast=float)
-MEMORY_CLEANUP_BATCH_SIZE = config('MEMORY_CLEANUP_BATCH_SIZE', default=100, cast=int)
-MEMORY_SYNAPTIC_STRENGTHEN_RATE = config('MEMORY_SYNAPTIC_STRENGTHEN_RATE', default=1.2, cast=float)
+MEMORY_CONSOLIDATION_HOURS = safe_config('MEMORY_CONSOLIDATION_HOURS', default=24, cast=int)
+MEMORY_RETENTION_THRESHOLD = safe_config('MEMORY_RETENTION_THRESHOLD', default=0.6, cast=float)
+MEMORY_CLEANUP_BATCH_SIZE = safe_config('MEMORY_CLEANUP_BATCH_SIZE', default=100, cast=int)
+MEMORY_SYNAPTIC_STRENGTHEN_RATE = safe_config('MEMORY_SYNAPTIC_STRENGTHEN_RATE', default=1.2, cast=float)
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -295,11 +303,6 @@ CHANNEL_LAYERS = {
 
 WHITENOISE_ALLOW_ALL_ORIGINS = True
 WHITENOISE_ROOT = str(MEDIA_ROOT)
-
-# 自动加载 .env 文件（如果存在）
-dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
 
 # 读取 OpenAI API Key（可用于全局配置）
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")  # 从环境变量读取OpenAI密钥

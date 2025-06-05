@@ -33,6 +33,7 @@ urlpatterns = [
     path("eva/", include("eva_service.urls")),  # EVA 服务模块的路由
     path("api/", include("api_service.urls")),  # API 服务模块的路由
     path('speech/', include('speech.urls')),  # 语音服务的路由
+    path('secondme_memories/', include('secondme_master.urls'))
 ]
 
 # 配置静态和媒体文件路由

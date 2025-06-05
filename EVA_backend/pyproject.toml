@@ -11,7 +11,6 @@ packages = [
     { include = "task_manager_app" },
     { include = "eva_backend_django" }
 ]
-package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
@@ -249,7 +248,7 @@ tokenizers = "0.20.0"
 tomlkit = "0.13.2"
 tornado = "6.4.2"
 tqdm = "4.66.5"
-transformers = "4.45.1"
+transformers = ">=4.46.0,<5.0.0"
 twisted = "24.10.0"
 txaio = "23.1.1"
 typer = "0.15.1"
@@ -276,13 +275,22 @@ torch = "^2.7.0"
 websockets = "^11.0"
 pinecone-client = "2.2.3"
 flask = "^3.0.0"
-graphrag = "^0.1.0"
-datasets = "^2.19.0"
+flask-sock = "^0.6.0"  # Downgraded to stable version
 
+# Development environment dependencies
+# Use 'poetry install --with dev' to install development dependencies
 [tool.poetry.group.dev.dependencies]
-pytest = "8.3.3"
-pytest-asyncio = "0.23.6"
+pytest = "7.4.4"
+pandas = "2.2.3"
+fnllm = {extras = ["azure", "openai"], version = "0.1.2"}
+peft = "0.14.0"
+trl = "0.13.0"
+datasets = "3.3.2"
+jiter = "0.8.2"
+
+# Documentation environment dependencies
+# Use 'poetry install --with docs' to install documentation dependencies
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

@@ -231,15 +231,10 @@ class MemoryConsumer(AsyncWebsocketConsumer):
                 user_msg_key = f"user_msg:{message_id}"
                 await set_key(user_msg_key, user_message, ex=3600)
                 
-                # 组合上下文
-                context_result = await self.central_executive.combine_context(user_message)
-                if not context_result:
-                    logger.warning(f"[MemoryConsumer] 上下文组合结果为空")
-                    return "系统记忆暂时不可用，将仅使用当前对话响应。"
-                    
-                final_context = context_result.get("final_context", "")
+                # SecondMe 已替换原有记忆系统，此处 combine_context 调用已移除，无需再拼接上下文
+                final_context = "系统记忆暂时不可用，将仅使用当前对话响应。"
                 if not final_context:
-                    logger.warning(f"[MemoryConsumer] 最终上下文为空: {context_result}")
+                    logger.warning(f"[MemoryConsumer] 最终上下文为空")
                     return "系统记忆暂时不可用，将仅使用当前对话响应。"
 
                 # 写入 Redis

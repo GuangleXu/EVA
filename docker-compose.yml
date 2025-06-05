@@ -11,8 +11,8 @@ services:
       - ./EVA_backend:/app
       - ./EVA_backend/media:/app/media
       - ./EVA_backend/logfiles:/app/logfiles
-      - ./EVA_backend/Second-Me/data/sqlite:/app/Second-Me/data/sqlite
-      - F:/SecondMeData:/app/data
+      - ./EVA_backend/data/chroma_db:/app/data/chroma_db
+      - ./EVA_backend/data/sqlite:/app/data/sqlite
     ports:
       - "8000:8000"
     depends_on:
@@ -23,21 +23,13 @@ services:
     env_file:
       - ./EVA_backend/.env
     environment:
-      - PYTHONPATH=/app:/app/Second-Me
+      - PYTHONPATH=/app
       - PYTHONIOENCODING=utf-8
       - LANG=C.UTF-8
       - DOCKER_COMPOSE=true
-      - PINECONE_API_KEY=5c190a0f-50bc-47c4-ad83-8eea0dd8185b
-      - PINECONE_ENVIRONMENT=us-east-1-aws
-      - PINECONE_MEMORY_INDEX_NAME=eva-memory
-      - PINECONE_RULE_INDEX_NAME=eva-rule
-      - PINECONE_TEXT_KEY=text
-      - PINECONE_DIMENSION=1024
-      - PINECONE_METRIC=cosine
-      - PINECONE_CLOUD=aws
-      - PINECONE_REGION=us-east-1
     networks:
       - eva-network
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/health_check/"]
       interval: 30s
@@ -69,6 +61,7 @@ services:
       - "6379:6379"
     networks:
       - eva-network
+
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -95,6 +88,7 @@ services:
       - "5432:5432"
     networks:
       - eva-network
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -116,12 +110,14 @@ services:
       - ./EVA_backend:/app
       - ./EVA_backend/media:/app/media
       - ./EVA_backend/logfiles:/app/logfiles
+      - ./EVA_backend/data/chroma_db:/app/data/chroma_db
+      - ./EVA_backend/data/sqlite:/app/data/sqlite
     depends_on:
       - eva-backend
       - redis
       - db
     environment:
-      - PYTHONPATH=/app:/app/Second-Me
+      - PYTHONPATH=/app
       - PYTHONIOENCODING=utf-8
       - LANG=C.UTF-8
       - DOCKER_COMPOSE=true
@@ -144,50 +140,6 @@ services:
         max-size: "10m"
         max-file: "3"
     platform: linux/amd64
-
-  second-me-backend:
-    build:
-      context: ./EVA_backend/Second-Me
-      dockerfile: Dockerfile.backend
-    container_name: second-me-backend
-    restart: unless-stopped
-    ports:
-      - "8002:8002"
-      - "8080:8080"
-    volumes:
-      - F:/SecondMeData:/app/data
-      - ./EVA_backend/Second-Me/logs:/app/logs
-      - ./EVA_backend/Second-Me/run:/app/run
-      - ./EVA_backend/Second-Me/resources:/app/resources
-      - ./EVA_backend/Second-Me/docker:/app/docker
-      - ./EVA_backend/Second-Me/.env:/app/.env
-      - llama-cpp-build:/app/llama.cpp/build
-    environment:
-      - LOCAL_APP_PORT=8002
-      - IN_DOCKER_ENV=1
-      - PLATFORM=linux
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - eva-network
-
-  second-me-frontend:
-    build:
-      context: ./EVA_backend/Second-Me
-      dockerfile: Dockerfile.frontend
-    container_name: second-me-frontend
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./EVA_backend/Second-Me/logs:/app/logs
-      - ./EVA_backend/Second-Me/resources:/app/resources
-    environment:
-      - VITE_API_BASE_URL=http://second-me-backend:8002
-    depends_on:
-      - second-me-backend
-    networks:
-      - eva-network
 
 networks:
   eva-network:

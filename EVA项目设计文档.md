@@ -9,8 +9,6 @@ EVA 是一款本地运行的 AI 助理，面向"个人专属助手"场景，具�
 
 理解自然语言输入；
 
-结合短期（WorkingTermMemory）、长期（LongTermMemory）与规则类记忆（RuleMemory）进行上下文推理，并通过 combine_context 统一拼接 final_context，供 LLM 直接使用；
-
 调用 LLM（如 Ollama / DeepSeek）生成回复；
 
 执行用户指令与功能模块联动（如语音播报、GUI 集成）；
@@ -88,15 +86,16 @@ environment=PYTHONPATH="/app"
 - 保证后续容器启动和运行更流畅
 
 【详细步骤】
-1. 关闭 WSL 和 Docker Desktop（确保没有相关进程占用虚拟磁盘）
-   - 在 PowerShell（普通或管理员模式均可）输入：
-     wsl --shutdown  # 彻底关闭所有 WSL 实例
-   - 右下角托盘退出 Docker Desktop（如已开启）
 
-2. 清理 Docker 无用内容（建议定期执行）
+1. 清理 Docker 无用内容（建议定期执行）
    - 在 PowerShell 输入：
      docker system prune -a --volumes  # 清理无用容器、镜像、网络、卷
    - 说明：此命令会释放大量空间，但不会影响正在运行的容器
+
+2. 关闭 WSL 和 Docker Desktop（确保没有相关进程占用虚拟磁盘）
+   - 在 PowerShell（普通或管理员模式均可）输入：
+     wsl --shutdown  # 彻底关闭所有 WSL 实例
+   - 右下角托盘退出 Docker Desktop（如已开启）
 
 3. 压缩 WSL 虚拟磁盘（必须以管理员身份运行 PowerShell）
    - 在"开始菜单"搜索 PowerShell，右键"以管理员身份运行"
@@ -116,6 +115,7 @@ environment=PYTHONPATH="/app"
 4.2 使用 Docker 启动
 cd E:\MyAIAssistant\EVA
 docker-compose up --build
+docker-compose up -d
 4.3 进入后端容器
 docker exec -it eva-backend /bin/bash
 4.4 启动本地虚拟环境（如不使用 Docker）
@@ -159,7 +159,6 @@ poetry install
   - delete_rule(rule_id)                    # 删除规则
 - 统一调度：
   - central_executive.process_input(raw_input) # 自动判别类型并分流到对应适配器
-  - central_executive.combine_context(user_message) # 拼接最终上下文，供 LLM 使用
 
 【注意事项】
 - 所有记忆操作建议通过 central_executive 统一调用，避免直接操作底层适配器。

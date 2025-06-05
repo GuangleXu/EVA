@@ -1,0 +1,52 @@
+[
+    {
+        "entity_id": "292ea052-61f4-4ce2-a7ea-37961c92d438",
+        "entity_name": "EVA-MEMORY",
+        "entity_description": "EVA-MEMORY is a company that operates as a data recording entity, capturing personal preferences and information from users. It utilizes a data recording system designed to track user interactions and queries effectively. Within the organization, EVA-MEMORY mandates that employees wear identification badges to ensure security and identification.",
+        "doc_id": [
+            1,
+            2,
+            3
+        ]
+    },
+    {
+        "entity_id": "08dd0eb5-ddde-4d78-9404-9e7493772f51",
+        "entity_name": "今天天气怎么样",
+        "entity_description": "The phrase \"今天天气怎么样\" translates to \"How is the weather today?\" and represents a common inquiry about weather conditions.)<|COMPLETE|>(\"entity\"",
+        "doc_id": [
+            1
+        ]
+    },
+    {
+        "entity_id": "e2945da2-d0a8-48d7-90c8-7456670b4c04",
+        "entity_name": "今天天气",
+        "entity_description": "The phrase \"今天天气\" translates to \"today's weather\" and represents a concept related to weather conditions.)<|COMPLETE|>",
+        "doc_id": [
+            1
+        ]
+    },
+    {
+        "entity_id": "704b3482-0e30-4742-80a6-ec921bad7442",
+        "entity_name": "红色",
+        "entity_description": "红色 is a color that is favored by the individual mentioned in the data.)<|COMPLETE|>(\"entity\"",
+        "doc_id": [
+            2
+        ]
+    },
+    {
+        "entity_id": "95cf974e-7889-4605-b084-14d3cbcaaa09",
+        "entity_name": "颜色",
+        "entity_description": "颜色 refers to the concept of color, which is being discussed in the context of personal preference.)<|COMPLETE|>",
+        "doc_id": [
+            2
+        ]
+    },
+    {
+        "entity_id": "ca3d6b09-3a00-4c27-8deb-bf554e0aaa9e",
+        "entity_name": "工牌",
+        "entity_description": "",
+        "doc_id": [
+            3
+        ]
+    }
+]
